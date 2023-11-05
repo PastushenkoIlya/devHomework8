@@ -1,0 +1,1 @@
+create index mult_col_inhab_to_flats on inhabitants_to_flats(flat_id, resident_id)
