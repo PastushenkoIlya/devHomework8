@@ -1,6 +1,5 @@
 package org.example;
 
-import org.apache.log4j.Logger;
 import org.flywaydb.core.Flyway;
 
 import java.sql.*;
@@ -8,36 +7,56 @@ import java.sql.*;
 import static org.example.Config.*;
 
 public class OsbbCRUD {
-    static Logger logger = Logger.getLogger(OsbbCRUD.class);
+    //static Logger logger = Logger.getLogger(OsbbCRUD.class);
     private Connection connection;
-    public OsbbCRUD() throws SQLException {
-        logger.info("initialization of crud interface");
+    public OsbbCRUD(){
+      //  logger.info("initialization of crud interface");
 
         fwMigrate();
 
-        connection = DriverManager.getConnection(jdbcUrl, username, password);
+        try {
+            connection = DriverManager.getConnection(jdbcUrl, username, password);
+        } catch (SQLException e) {
+            System.out.println("помилка при отримуванні підключення");
+            throw new RuntimeException(e);
+        }
     }
     public static void fwMigrate(){
-        logger.info("Processed migration with flyWay");
-        Flyway flyway = Flyway.configure()
+
+        Flyway.configure()
                 .dataSource(jdbcUrl, username, password)
-                .locations("classpath:db/migration")
-                .load();
+                .schemas("flywaycreated")
+              //  .locations("classpath:resources.db.migration")
+                .load()
+                .migrate();
+        //logger.info("Processed migration with flyWay");
     }
     public void close() throws SQLException {
-        logger.trace("closing jdbc connection");
+        //logger.trace("closing jdbc connection");
         connection.close();
         connection = null;
     }
-    public String selectFirstBuildingsRow(String sqlQuery) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
-        ResultSet resultSet = preparedStatement.executeQuery();
+    public String selectFirstBuildingsRow(String sqlQuery) {
+        ResultSet resultSet;
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery)) {
+            resultSet = preparedStatement.executeQuery();
         String result = "";
         while (resultSet.next()) {
-            int id = resultSet.getInt("id");
-            String address = resultSet.getString("address");
-            result = "id: " + id + "\naddress: " + address;
+            String name = resultSet.getString("rsd.name");
+            String surname = resultSet.getString("rsd.surname");
+            String email = resultSet.getString("rsd.email");
+            String address = resultSet.getString("group_concat(distinct(bld.address))");
+            String apartment_number = resultSet.getString("group_concat(flt.apartment_number)");
+            String flat_area = resultSet.getString("group_concat(flt.area)");
+
+            result += "name: "+name+", surname: "+surname+", email: "+email+", address: "
+                    +address+", apartment number: " +apartment_number+", flat area: "+flat_area +"\n";
     }
-        return result;
-}
+
+        return(result);
+        } catch (SQLException e) {
+            System.out.println("помилка при виводі");
+            throw new RuntimeException(e);
+        }
+    }
 }

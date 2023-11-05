@@ -1,3 +1,3 @@
-2023-11-05 03:00:16 INFO  OsbbCRUD:14 - initialization of crud interface
-2023-11-05 03:00:16 INFO  OsbbCRUD:21 - Processed migration with flyWay
-2023-11-05 03:00:18 FATAL App:20 - java.sql.SQLSyntaxErrorException: Table 'flywaycreated.buildings' doesn't exist
+2023-11-05 18:10:45 INFO  OsbbCRUD:14 - initialization of crud interface
+2023-11-05 18:10:46 INFO  OsbbCRUD:27 - Processed migration with flyWay
+2023-11-05 18:10:47 FATAL App:18 - java.sql.SQLSyntaxErrorException: Table 'flywaycreated.buildings' doesn't exist
