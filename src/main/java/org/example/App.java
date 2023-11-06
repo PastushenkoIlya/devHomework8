@@ -10,6 +10,7 @@ public class App {
                 "owners_to_flats.owner_id = any(select id from residents)\n" +
                 "group by name, surname, email\n" +
                 "having count(flt.apartment_number) < 2";
+        FlyWayInterface.fwMigrate();
         OsbbCRUD osbbCRUD = new OsbbCRUD();
         System.out.println(osbbCRUD.selectFirstBuildingsRow(sqlQuery));
         osbbCRUD.close();

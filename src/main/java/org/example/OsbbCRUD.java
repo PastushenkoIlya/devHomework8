@@ -1,7 +1,6 @@
 package org.example;
 
 import org.apache.log4j.Logger;
-import org.flywaydb.core.Flyway;
 import java.sql.*;
 import static org.example.Config.*;
 
@@ -10,21 +9,12 @@ public class OsbbCRUD {
     private Connection connection;
     public OsbbCRUD(){
         logger.info("initialization of crud interface");
-        fwMigrate();
         try {
-            connection = DriverManager.getConnection(jdbcUrl, username, password);
+            connection = DriverManager.getConnection(JDBCURL, USERNAME, PASSWORD);
         } catch (SQLException e) {
             logger.fatal("Помилка при отриманні підключення");
             throw new RuntimeException(e);
         }
-    }
-    public static void fwMigrate(){
-        Flyway.configure()
-                .dataSource(jdbcUrl, username, password)
-                .schemas("flywaycreated")
-                .load()
-                .migrate();
-        logger.info("Processed migration with flyWay");
     }
     public void close(){
         logger.trace("closing jdbc connection");
